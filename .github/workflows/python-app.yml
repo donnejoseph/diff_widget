@@ -42,6 +42,5 @@ jobs:
     - name: Run tests with Xvfb
       run: |
         . .venv/bin/activate
-        pip install pytest-qt
         # Start Xvfb and run pytest
         xvfb-run --auto-servernum --server-args='-screen 0 1920x1080x24' pytest
