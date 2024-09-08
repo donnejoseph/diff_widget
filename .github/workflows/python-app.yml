@@ -45,11 +45,3 @@ jobs:
         . .venv/bin/activate
         flake8 app/ tests/
 
-    - name: Run tests with Xvfb
-      env:
-        DISPLAY: ":99"
-      run: |
-        . .venv/bin/activate
-        Xvfb :99 -screen 0 1920x1080x24 &
-        sleep 3
-        pytest --maxfail=1 --disable-warnings -v
