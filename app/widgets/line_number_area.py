@@ -23,7 +23,7 @@ class LineNumberArea(QWidget):
 
         :return: QSize object representing the suggested size.
         """
-        # Ленивый импорт
+        # lazy import to avoid circular dependency
         from app.widgets.code_editor import CodeEditor
         if isinstance(self.text_edit, CodeEditor):
             return QSize(self.text_edit.line_number_area_width(), 0)
@@ -35,7 +35,7 @@ class LineNumberArea(QWidget):
 
         :param event: The paint event object.
         """
-        # Ленивый импорт
+        # lazy import to avoid circular dependency
         from app.widgets.code_editor import CodeEditor
         if isinstance(self.text_edit, CodeEditor):
             self.text_edit.line_number_area_paint_event(event)
