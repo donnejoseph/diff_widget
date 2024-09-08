@@ -21,3 +21,16 @@ First, clone the repository to your local machine:
 ```bash
 git clone git@github.com:donnejoseph/diff_widget.git
 cd diff_widget
+
+#  For Linux/macOS:
+python3 -m venv .venv
+source .venv/bin/activate
+
+# For Windows:
+python -m venv .venv
+.venv\Scripts\activate
+
+pip install -r requirements.txt
+python app/main.py
+
+
