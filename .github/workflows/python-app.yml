@@ -24,8 +24,15 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libegl1-mesa libgl1-mesa-glx xvfb xauth  # Install Xvfb and additional tools
-        sudo apt-get install -y libxkbcommon-x11-0  # Install additional dependencies for PySide6
+        sudo apt-get install -y libegl1-mesa libgl1-mesa-glx xvfb xauth
+        sudo apt-get install -y libxkbcommon-x11-0
+
+    - name: Create and activate virtual environment
+      run: |
+        python -m venv .venv
+        . .venv/bin/activate
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
     - name: List installed libraries
       run: |
@@ -36,15 +43,13 @@ jobs:
     - name: Run flake8
       run: |
         . .venv/bin/activate
-        pip install flake8
         flake8 app/ tests/
 
     - name: Run tests with Xvfb
       env:
-        DISPLAY: ":99"  # Set the DISPLAY environment variable
+        DISPLAY: ":99"
       run: |
         . .venv/bin/activate
-        # Start Xvfb in the background
         Xvfb :99 -screen 0 1920x1080x24 &
-        sleep 3  # Give Xvfb some time to start
+        sleep 3
         pytest --maxfail=1 --disable-warnings -v
