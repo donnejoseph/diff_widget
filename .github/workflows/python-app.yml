@@ -24,23 +24,24 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libegl1-mesa libgl1-mesa-glx
+        sudo apt-get install -y libegl1-mesa libgl1-mesa-glx xvfb  # Install Xvfb and required libraries
 
     - name: Install dependencies
       run: |
         python -m venv .venv
-        . .venv/bin/activate  # Use a dot for activating the virtual environment in Linux
-        python -m pip install --upgrade pip  # Upgrade pip to the latest version
-        pip install -r requirements.txt  # Install dependencies from requirements.txt
+        . .venv/bin/activate
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
     - name: Run flake8
       run: |
-        . .venv/bin/activate  # Use a dot for activating the virtual environment in Linux
+        . .venv/bin/activate
         pip install flake8
         flake8 app/ tests/
 
-    - name: Run tests
+    - name: Run tests with Xvfb
       run: |
-        . .venv/bin/activate  # Use a dot for activating the virtual environment in Linux
-        pip install pytest-qt  # Ensure pytest-qt is installed
-        pytest
+        . .venv/bin/activate
+        pip install pytest-qt
+        # Start Xvfb and run pytest
+        xvfb-run --auto-servernum --server-args='-screen 0 1920x1080x24' pytest
