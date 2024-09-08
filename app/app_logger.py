@@ -9,7 +9,7 @@ logger.setLevel(logging.ERROR)  # Уровень логирования наст
 # Настройка обработчика для записи логов в файл
 file_handler = RotatingFileHandler(
     "../app.log",        # Имя файла
-    maxBytes=5*1024*1024,  # Максимальный размер файла (5 MB)
+    maxBytes=5 * 1024 * 1024,  # Максимальный размер файла (5 MB)
     backupCount=3     # Количество резервных копий логов
 )
 file_handler.setLevel(logging.ERROR)

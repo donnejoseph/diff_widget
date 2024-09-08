@@ -1,6 +1,6 @@
-from typing import Optional
-from PySide6.QtGui import QColor, QPainter, Qt, QTextCursor, QTextCharFormat
-from PySide6.QtCore import QRect, QEvent
+from typing import Optional, List
+from PySide6.QtGui import QColor, QPainter, Qt, QTextCharFormat, QResizeEvent, QPaintEvent, QTextCursor
+from PySide6.QtCore import QRect
 from PySide6.QtWidgets import QPlainTextEdit, QTextEdit
 
 from app.widgets.line_number_area import LineNumberArea
@@ -49,7 +49,7 @@ class CodeEditor(QPlainTextEdit):
         if rect.contains(self.viewport().rect()):
             self.update_line_number_area_width(0)
 
-    def resizeEvent(self, event: QEvent) -> None:
+    def resizeEvent(self, event: QResizeEvent) -> None:
         """
         Handles the resize event of the editor.
         """
@@ -57,7 +57,7 @@ class CodeEditor(QPlainTextEdit):
         cr: QRect = self.contentsRect()
         self.line_number_area.setGeometry(QRect(cr.left(), cr.top(), self.line_number_area_width(), cr.height()))
 
-    def line_number_area_paint_event(self, event: QEvent) -> None:
+    def line_number_area_paint_event(self, event: QPaintEvent) -> None:
         """
         Paints the line number area.
         """
@@ -73,9 +73,8 @@ class CodeEditor(QPlainTextEdit):
             if block.isVisible() and bottom >= event.rect().top():
                 number: str = str(block_number + 1)
                 painter.setPen(QColor("#d3d3d3"))
-                painter.drawText(0, top, self.line_number_area.width(), self.fontMetrics().height(),
-                                 Qt.AlignRight, number)
-
+                painter.drawText(0, top, self.line_number_area.width(),
+                                 self.fontMetrics().height(), Qt.AlignmentFlag.AlignRight, number)
             block = block.next()
             top = bottom
             bottom = top + int(self.blockBoundingRect(block).height())
@@ -85,15 +84,18 @@ class CodeEditor(QPlainTextEdit):
         """
         Highlights the current line where the cursor is located.
         """
-        extra_selections = []
+        extra_selections: List[QTextEdit.ExtraSelection] = []
 
         if not self.isReadOnly():
             selection = QTextEdit.ExtraSelection()
             line_color = QColor("#3c3c3c")
-            selection.format.setBackground(line_color)
-            selection.format.setProperty(QTextCharFormat.FullWidthSelection, True)
-            selection.cursor = self.textCursor()
-            selection.cursor.clearSelection()
+            fmt = QTextCharFormat()
+            fmt.setBackground(line_color)
+            fmt.setProperty(QTextCharFormat.FullWidthSelection, True)  # type: ignore[attr-defined]
+            selection.format = fmt  # type: ignore[attr-defined]  # Ignore mypy check
+            cursor: QTextCursor = self.textCursor()
+            cursor.clearSelection()
+            selection.cursor = cursor  # type: ignore[attr-defined]  # Ignore mypy check
             extra_selections.append(selection)
 
         self.setExtraSelections(extra_selections)

@@ -1,6 +1,6 @@
 from pygments.lexers import PythonLexer
 from pygments.token import Token
-from PySide6.QtGui import QColor, QSyntaxHighlighter, QTextCharFormat, QFont, QPaintDevice
+from PySide6.QtGui import QColor, QSyntaxHighlighter, QTextCharFormat, QFont, QTextDocument
 
 
 class PygmentsHighlighter(QSyntaxHighlighter):
@@ -8,7 +8,7 @@ class PygmentsHighlighter(QSyntaxHighlighter):
     A syntax highlighter using Pygments for Python code.
     """
 
-    def __init__(self, document: QPaintDevice) -> None:
+    def __init__(self, document: QTextDocument) -> None:
         """
         Initializes the syntax highlighter for the given document.
 
@@ -24,6 +24,7 @@ class PygmentsHighlighter(QSyntaxHighlighter):
         :param text: The text block to highlight.
         """
         tokens: list[tuple[Token, str]] = list(self.lexer.get_tokens(text))
+
         index: int = 0
 
         for token_type, value in tokens:
@@ -50,8 +51,7 @@ class PygmentsHighlighter(QSyntaxHighlighter):
         char_format: QTextCharFormat = QTextCharFormat()
         char_format.setForeground(color)
         if bold:
-            char_format.setFontWeight(QFont.Bold)
+            char_format.setFontWeight(QFont.Weight.Bold)
         if italic:
             char_format.setFontItalic(True)
         return char_format
-

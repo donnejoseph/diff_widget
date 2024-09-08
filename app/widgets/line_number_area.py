@@ -1,4 +1,5 @@
-from PySide6.QtCore import QSize, QEvent
+from PySide6.QtCore import QSize
+from PySide6.QtGui import QPaintEvent
 from PySide6.QtWidgets import QWidget
 
 
@@ -22,13 +23,19 @@ class LineNumberArea(QWidget):
 
         :return: QSize object representing the suggested size.
         """
-        return QSize(self.text_edit.line_number_area_width(), 0)
+        # Ленивый импорт
+        from app.widgets.code_editor import CodeEditor
+        if isinstance(self.text_edit, CodeEditor):
+            return QSize(self.text_edit.line_number_area_width(), 0)
+        return QSize(0, 0)
 
-    def paintEvent(self, event: QEvent) -> None:
+    def paintEvent(self, event: QPaintEvent) -> None:
         """
         Handles the paint event for the line number area.
 
         :param event: The paint event object.
         """
-        self.text_edit.line_number_area_paint_event(event)
-
+        # Ленивый импорт
+        from app.widgets.code_editor import CodeEditor
+        if isinstance(self.text_edit, CodeEditor):
+            self.text_edit.line_number_area_paint_event(event)

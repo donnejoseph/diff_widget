@@ -1,6 +1,6 @@
 import pytest
 from PySide6.QtWidgets import QApplication
-from PySide6.QtGui import QTextDocument, QTextCharFormat, QColor, QTextCursor
+from PySide6.QtGui import QTextDocument, QColor, QTextCursor
 
 from app.widgets.code_compare_widget import CodeCompareWidget
 

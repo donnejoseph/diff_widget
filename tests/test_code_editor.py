@@ -1,6 +1,6 @@
 import pytest
 from PySide6.QtGui import QColor, QPaintEvent, QTextCursor
-from PySide6.QtCore import QRect, QEvent
+from PySide6.QtCore import QRect
 from PySide6.QtWidgets import QApplication
 
 from app.widgets.code_editor import CodeEditor
@@ -31,15 +31,15 @@ def test_initialization(code_editor):
 
 def test_line_number_area_width(code_editor):
     """Test the width calculation for the line number area."""
-    code_editor.setPlainText("\n" * 10)  # Add multiple lines to increase the width
-    assert code_editor.line_number_area_width() >= 4  # Minimum width should be for single-digit lines
+    code_editor.setPlainText("\n" * 10)
+    assert code_editor.line_number_area_width() >= 4
 
 
 def test_update_line_number_area_width(code_editor, qtbot):
     """Test if the line number area width is updated correctly."""
     initial_width = code_editor.line_number_area_width()
-    code_editor.setPlainText("\n" * 100)  # Add more lines to require a wider area
-    qtbot.wait(100)  # Give some time for the event loop to process
+    code_editor.setPlainText("\n" * 100)
+    qtbot.wait(100)
     updated_width = code_editor.line_number_area_width()
     assert updated_width > initial_width
 
@@ -57,6 +57,4 @@ def test_highlight_current_line(code_editor, qtbot):
 def test_line_number_area_paint_event(code_editor):
     """Test the painting of the line number area."""
     event = QPaintEvent(QRect(0, 0, 100, 100))
-    code_editor.line_number_area_paint_event(event)  # Should not raise any exceptions
-
-
+    code_editor.line_number_area_paint_event(event)
