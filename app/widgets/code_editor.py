@@ -1,5 +1,6 @@
+from typing import Optional
 from PySide6.QtGui import QColor, QPainter, Qt, QTextCursor, QTextCharFormat
-from PySide6.QtCore import QRect
+from PySide6.QtCore import QRect, QEvent
 from PySide6.QtWidgets import QPlainTextEdit, QTextEdit
 
 from app.widgets.line_number_area import LineNumberArea
@@ -7,38 +8,38 @@ from app.widgets.line_number_area import LineNumberArea
 
 class CodeEditor(QPlainTextEdit):
     """
-    Класс редактора кода с номерами строк и подсветкой текущей строки.
+    Code editor class with line numbers and current line highlighting.
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: Optional[QPlainTextEdit] = None) -> None:
         super(CodeEditor, self).__init__(parent)
-        self.line_number_area = LineNumberArea(self)
+        self.line_number_area: LineNumberArea = LineNumberArea(self)
         self.blockCountChanged.connect(self.update_line_number_area_width)
         self.updateRequest.connect(self.update_line_number_area)
         self.cursorPositionChanged.connect(self.highlight_current_line)
         self.update_line_number_area_width(0)
 
-    def line_number_area_width(self):
+    def line_number_area_width(self) -> int:
         """
-        Возвращает ширину области номеров строк.
+        Returns the width of the line number area.
         """
-        digits = 1
-        max_block = max(1, self.blockCount())
+        digits: int = 1
+        max_block: int = max(1, self.blockCount())
         while max_block >= 10:
             max_block //= 10
             digits += 1
-        space = 3 + self.fontMetrics().horizontalAdvance('9') * digits
+        space: int = 3 + self.fontMetrics().horizontalAdvance('9') * digits
         return space
 
-    def update_line_number_area_width(self, _):
+    def update_line_number_area_width(self, _: int) -> None:
         """
-        Обновляет ширину области номеров строк.
+        Updates the width of the line number area.
         """
         self.setViewportMargins(self.line_number_area_width(), 0, 0, 0)
 
-    def update_line_number_area(self, rect, dy):
+    def update_line_number_area(self, rect: QRect, dy: int) -> None:
         """
-        Обновляет область номеров строк.
+        Updates the line number area.
         """
         if dy:
             self.line_number_area.scroll(0, dy)
@@ -48,29 +49,29 @@ class CodeEditor(QPlainTextEdit):
         if rect.contains(self.viewport().rect()):
             self.update_line_number_area_width(0)
 
-    def resizeEvent(self, event):
+    def resizeEvent(self, event: QEvent) -> None:
         """
-        Обрабатывает событие изменения размера редактора.
+        Handles the resize event of the editor.
         """
         super(CodeEditor, self).resizeEvent(event)
-        cr = self.contentsRect()
+        cr: QRect = self.contentsRect()
         self.line_number_area.setGeometry(QRect(cr.left(), cr.top(), self.line_number_area_width(), cr.height()))
 
-    def line_number_area_paint_event(self, event):
+    def line_number_area_paint_event(self, event: QEvent) -> None:
         """
-        Отрисовывает область номеров строк.
+        Paints the line number area.
         """
-        painter = QPainter(self.line_number_area)
+        painter: QPainter = QPainter(self.line_number_area)
         painter.fillRect(event.rect(), QColor("#2b2b2b"))
 
         block = self.firstVisibleBlock()
-        block_number = block.blockNumber()
-        top = int(self.blockBoundingGeometry(block).translated(self.contentOffset()).top())
-        bottom = top + int(self.blockBoundingRect(block).height())
+        block_number: int = block.blockNumber()
+        top: int = int(self.blockBoundingGeometry(block).translated(self.contentOffset()).top())
+        bottom: int = top + int(self.blockBoundingRect(block).height())
 
         while block.isValid() and top <= event.rect().bottom():
             if block.isVisible() and bottom >= event.rect().top():
-                number = str(block_number + 1)
+                number: str = str(block_number + 1)
                 painter.setPen(QColor("#d3d3d3"))
                 painter.drawText(0, top, self.line_number_area.width(), self.fontMetrics().height(),
                                  Qt.AlignRight, number)
@@ -80,9 +81,9 @@ class CodeEditor(QPlainTextEdit):
             bottom = top + int(self.blockBoundingRect(block).height())
             block_number += 1
 
-    def highlight_current_line(self):
+    def highlight_current_line(self) -> None:
         """
-        Подсвечивает текущую строку, где находится курсор.
+        Highlights the current line where the cursor is located.
         """
         extra_selections = []
 

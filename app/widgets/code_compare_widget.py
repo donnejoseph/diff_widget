@@ -1,5 +1,7 @@
 import os
 import difflib
+from typing import Optional
+
 from PySide6.QtGui import QTextCursor, QColor, QTextCharFormat
 from PySide6.QtWidgets import QWidget, QHBoxLayout
 
@@ -8,99 +10,94 @@ from app.widgets.pygments_highlighter import PygmentsHighlighter
 from app.app_logger import logger
 
 
-
 class CodeCompareWidget(QWidget):
     """
     Widget for code comparison.
     """
 
-    def __init__(self, user_code: str, ai_code: str, parent=None):
+    def __init__(self, user_code: str, ai_code: str, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
 
-        # Инициализация редакторов кода
-        self.left_text_edit = CodeEditor()
-        self.right_text_edit = CodeEditor()
+        # Initialize code editors
+        self.left_text_edit: CodeEditor = CodeEditor()
+        self.right_text_edit: CodeEditor = CodeEditor()
 
-        # Установка начального текста
+        # Set initial text
         self.left_text_edit.setPlainText(user_code)
         self.right_text_edit.setPlainText(ai_code)
 
-        # Создание компоновки и добавление виджетов
-        self.layout = QHBoxLayout()
+        # Create layout and add widgets
+        self.layout: QHBoxLayout = QHBoxLayout()
         self.layout.addWidget(self.left_text_edit)
         self.layout.addWidget(self.right_text_edit)
         self.setLayout(self.layout)
 
-        # Применение подсветки синтаксиса
-        self.highlighter_old = PygmentsHighlighter(self.left_text_edit.document())
-        self.highlighter_new = PygmentsHighlighter(self.right_text_edit.document())
+        # Apply syntax highlighting
+        self.highlighter_old: PygmentsHighlighter = PygmentsHighlighter(self.left_text_edit.document())
+        self.highlighter_new: PygmentsHighlighter = PygmentsHighlighter(self.right_text_edit.document())
 
-        # Установка размера окна
+        # Set window size
         self.setFixedSize(1000, 600)
 
-        # Установка темной темы
+        # Set dark theme
         self.__set_dark_theme()
 
-        # Автоматическая подсветка различий
+        # Automatically highlight differences
         self.highlight_differences()
 
-    def __set_dark_theme(self):
+    def __set_dark_theme(self) -> None:
         """
         Sets the dark theme.
         """
-        stylesheet_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'resources', 'styles.qss')
+        stylesheet_path: str = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'resources', 'styles.qss')
         try:
             with open(stylesheet_path, "r") as file:
                 self.setStyleSheet(file.read())
         except FileNotFoundError:
             logger.error(f"File not found: {stylesheet_path}")
 
-    def highlight_differences(self):
+    def highlight_differences(self) -> None:
         """
         Highlights the differences in the code.
         """
-        # Получаем строки кода из обоих редакторов
-        left_text = self.left_text_edit.toPlainText().split('\n')
-        right_text = self.right_text_edit.toPlainText().split('\n')
+        # Get code lines from both editors
+        left_text: list[str] = self.left_text_edit.toPlainText().split('\n')
+        right_text: list[str] = self.right_text_edit.toPlainText().split('\n')
 
-        # Создаем matcher для поиска различий
-        matcher = difflib.SequenceMatcher(None, left_text, right_text)
+        # Create a matcher to find differences
+        matcher: difflib.SequenceMatcher = difflib.SequenceMatcher(None, left_text, right_text)
 
-        # Формат подсветки различий
-        highlight_format = QTextCharFormat()
+        # Format for highlighting differences
+        highlight_format: QTextCharFormat = QTextCharFormat()
         highlight_format.setBackground(QColor("green"))
 
-        # Очистка предыдущих выделений
+        # Clear previous highlights
         self.__clear_highlight(self.left_text_edit)
         self.__clear_highlight(self.right_text_edit)
 
-        # Обработка различий и подсветка
+        # Process differences and apply highlighting
         for tag, i1, i2, j1, j2 in matcher.get_opcodes():
             if tag in ('replace', 'delete'):
                 self.__highlight_lines(self.left_text_edit, i1, i2, highlight_format)
             if tag in ('replace', 'insert'):
                 self.__highlight_lines(self.right_text_edit, j1, j2, highlight_format)
 
-    def __clear_highlight(self, text_edit):
+    def __clear_highlight(self, text_edit: CodeEditor) -> None:
         """
         Clears the highlight in the specified editor.
         """
-        cursor = QTextCursor(text_edit.document())
+        cursor: QTextCursor = QTextCursor(text_edit.document())
         cursor.select(QTextCursor.Document)
         cursor.setCharFormat(QTextCharFormat())
 
-    def __highlight_lines(self, text_edit, start, end, format):
+    def __highlight_lines(self, text_edit: CodeEditor, start: int, end: int, format: QTextCharFormat) -> None:
         """
         Highlights the specified lines in the specified editor.
         """
-        cursor = QTextCursor(text_edit.document())
+        cursor: QTextCursor = QTextCursor(text_edit.document())
         for line in range(start, end):
             block = cursor.document().findBlockByNumber(line)
             if block.isValid():
                 cursor.setPosition(block.position())
                 cursor.movePosition(QTextCursor.EndOfBlock, QTextCursor.KeepAnchor)
                 cursor.mergeCharFormat(format)
-
-
-
-
