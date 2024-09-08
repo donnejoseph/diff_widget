@@ -29,16 +29,18 @@ jobs:
     - name: Install dependencies
       run: |
         python -m venv .venv
-        . .venv/bin/activate  # Используйте точку для активации виртуальной среды в Linux
-        pip install -r requirements.txt
+        . .venv/bin/activate  # Use a dot for activating the virtual environment in Linux
+        python -m pip install --upgrade pip  # Upgrade pip to the latest version
+        pip install -r requirements.txt  # Install dependencies from requirements.txt
 
     - name: Run flake8
       run: |
-        . .venv/bin/activate  # Используйте точку для активации виртуальной среды в Linux
+        . .venv/bin/activate  # Use a dot for activating the virtual environment in Linux
         pip install flake8
         flake8 app/ tests/
 
     - name: Run tests
       run: |
-        . .venv/bin/activate  # Используйте точку для активации виртуальной среды в Linux
+        . .venv/bin/activate  # Use a dot for activating the virtual environment in Linux
+        pip install pytest-qt  # Ensure pytest-qt is installed
         pytest
