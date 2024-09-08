@@ -1,0 +1,52 @@
+QWidget {
+    background-color: #1e1f22;
+}
+
+QPlainTextEdit {
+    background-color: #1e1e1e;
+    color: #c5c8c6;
+    font-family: 'Fira Code', Consolas, 'Courier New', monospace;
+    font-size: 13pt;
+    selection-background-color: #4e5b70;
+}
+
+QMenuBar {
+    background-color: #2b2b2b;
+    color: #ffffff;
+    border: 1px solid #4e4e4e;
+}
+
+QMenuBar::item {
+    background-color: #2b2b2b;
+    color: #ffffff;
+    padding: 4px 10px;
+}
+
+QMenuBar::item:selected {
+    background-color: #3c3c3c;
+}
+
+QMenu {
+    background-color: #2b2b2b;
+    color: #ffffff;
+    border: 1px solid #4e4e4e;
+}
+
+QMenu::item:selected {
+    background-color: #3c3c3c;
+}
+
+QToolBar {
+    background-color: #2b2b2b;
+    border: 1px solid #4e4e4e;
+}
+
+QPushButton {
+    background-color: #2b2b2b;
+    color: #ffffff;
+    border: 1px solid #4e4e4e;
+}
+
+QPushButton:hover {
+    background-color: #3c3c3c;
+}
