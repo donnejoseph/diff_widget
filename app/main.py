@@ -14,7 +14,7 @@ if __name__ == "__main__":
     return message"""
 
     ai_code: str = """def say_hello(name):
-    return f"hello {name}"""
+    return f'hello {name}'"""
 
     # Create and show the comparison widget
     widget: CodeCompareWidget = CodeCompareWidget(user_code, ai_code)
