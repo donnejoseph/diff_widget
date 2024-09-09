@@ -37,7 +37,8 @@ class CodeCompareWidget(QWidget):
         self.highlighter_new: PygmentsHighlighter = PygmentsHighlighter(self.right_text_edit.document())
 
         # Set window size
-        self.setFixedSize(1000, 600)
+        self.setMinimumSize(800, 600)
+        self.showMaximized()
 
         # Set dark theme
         self.__set_dark_theme()
